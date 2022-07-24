@@ -15,7 +15,7 @@ public class PokerCard
     public Decors decor;
     public int point;
 
-    public PokerCard(Decors d, int p)
+    public PokerCard(Decors d = Decors.heart, int p = 0)
     {
         if (p < 0 || p > 13)
             throw new Exception("Wrong Poker Point");

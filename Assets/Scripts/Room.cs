@@ -7,7 +7,7 @@ public class Room : MonoBehaviour
     public class PlayerInGameStat
     {
         public int uid;
-        public int moneyInPoxket;
+        public int moneyInPocket;
         public int moneyInPot;
         public bool hasBidThisRound;
         public bool hasFolded;
@@ -16,17 +16,15 @@ public class Room : MonoBehaviour
         public List<PokerCard> hand = new List<PokerCard>();
         public int timeCard;
     }
-    bool myTurn = false;
+    public bool myTurn = false;
 
-    private float pauseBetweenRounds = 3;
-    private float roundTime = 30;
-    private float timer = 0;
-    private int roundNum = 0;
-    private int timeCardPerRound = 1;
-    private int smallBlindMoneyNum = 1;
-    private int currentActivePlayer = 0;
-    private int currentSmallBlind = 0;
-    private bool gamePaused = false;
+    public float timer = 0;
+    public int roundNum = 0;
+    public int timeCardPerRound = 1;
+    public int smallBlindMoneyNum = 1;
+    public int currentActivePlayer = 0;
+    public int currentSmallBlind = 0;
+    public bool gamePaused = false;
 
     public enum roundState
     {
@@ -38,9 +36,15 @@ public class Room : MonoBehaviour
     }
     roundState curState;
 
-    List<PokerCard> deck;
-    List<PokerCard> flopTurnRiver;
-    List<PlayerInGameStat> players;
+    public List<PokerCard> flopTurnRiver;
+    public List<PlayerInGameStat> players;
+    RoomUI myUI;
+    private void Awake()
+    {
+        myUI = this.GetComponent<RoomUI>();
+        flopTurnRiver.Capacity = 5;
+        players.Capacity = 8;
+    }
     public PlayerInGameStat GetPlayerInfoById(int id)
     {
         for (int i = 0; i < players.Count; i++)
@@ -69,8 +73,8 @@ public class Room : MonoBehaviour
         }
         var stat = GetPlayerInfoById(Client.instance.loginUid);
         if (stat != null && !stat.hasQuited && !stat.hasFolded &&
-            stat.moneyInPoxket >= amount &&
-            (stat.moneyInPot + amount >= HighestBid() || amount == stat.moneyInPoxket))
+            stat.moneyInPocket >= amount &&
+            (stat.moneyInPot + amount >= HighestBid() || amount == stat.moneyInPocket))
         {
             ClientSend.RpcSend(ClientPackets.bid, (Packet p) =>
             {
@@ -130,5 +134,12 @@ public class Room : MonoBehaviour
             return true;
         }
         else return false;
+    }
+    public void UpdateUI()
+    {
+        myUI.ShowPlayer();
+        myUI.ShowPlayerHand();
+        myUI.ShowPoker();
+        myUI.ShowStat();
     }
 }

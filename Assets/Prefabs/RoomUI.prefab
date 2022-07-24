@@ -4998,6 +4998,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ff51c7ed543bc6f43b988ade9f57ec65, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  myTurn: 0
+  timer: 0
+  roundNum: 0
+  timeCardPerRound: 1
+  smallBlindMoneyNum: 1
+  currentActivePlayer: 0
+  currentSmallBlind: 0
+  gamePaused: 0
 --- !u!222 &9222904178435973799
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -5025,6 +5033,8 @@ MonoBehaviour:
   - {fileID: -8126706027523564625, guid: dfe2184a921ad2241ac12bb8cab960cb, type: 3}
   - {fileID: 6518737276950443075, guid: dfe2184a921ad2241ac12bb8cab960cb, type: 3}
   - {fileID: -5490112108248013230, guid: dfe2184a921ad2241ac12bb8cab960cb, type: 3}
+  totalPotText: {fileID: 5803365215951581980}
+  clockText: {fileID: 5157250170788280248}
 --- !u!1 &4733232635085004265
 GameObject:
   m_ObjectHideFlags: 0

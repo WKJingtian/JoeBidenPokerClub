@@ -21,8 +21,7 @@ public enum ServerPackets
     syncFlopTurnRiver,
     syncPlayerHand,
     requestPlayerAction,
-    playerActionReceived,
-    syncPlayerAccountStat,
+    congrateWinner,
 }
 
 /// <summary>Sent from client to server.</summary>
