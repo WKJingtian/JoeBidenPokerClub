@@ -22,6 +22,9 @@ public class Client : MonoBehaviour
     Dictionary<ClientPackets, AsyncCallback> serverCallbackMap = new Dictionary<ClientPackets, AsyncCallback>();
     Dictionary<ServerPackets, Action<Packet>> serverMessageHandlerMap = new Dictionary<ServerPackets, Action<Packet>>();
 
+    [HideInInspector] public int loginUid = -1;
+    [HideInInspector] public Room playRoom = null;
+
     private Packet receivedPacket;
     private void Awake()
     {
@@ -88,7 +91,6 @@ public class Client : MonoBehaviour
         isConnected = true;
         stream.BeginRead(receiveBuffer, 0, s_maxBufferSize, ReceiveCallback, null);
     }
-
     private void ReceiveCallback(IAsyncResult result)
     {
         try
@@ -110,7 +112,6 @@ public class Client : MonoBehaviour
             Disconnect();
         }
     }
-
     bool HandlePacket(byte[] data)
     {
         int l = 0;
@@ -138,7 +139,6 @@ public class Client : MonoBehaviour
         }
         return l <= 1;
     }
-
     public void Send(Packet p, AsyncCallback? toRead = null)
     {
         try
@@ -165,11 +165,101 @@ public class Client : MonoBehaviour
     }
     public void DoLogin(int uid, string password)
     {
+        if (loginUid != -1)
+        {
+            Debug.LogError("you have already logged in!");
+            return;
+        }
         ClientSend.RpcSend(ClientPackets.login, (Packet p) =>
         {
             p.Write(uid);
             p.Write(password);
         }, null);
+    }
+    public void JoinRoom(int joinWithCash, int roomId = -1)
+    {
+        if (loginUid == -1)
+        {
+            Debug.LogError("you havn't logged in!");
+            return;
+        }
+        ClientSend.RpcSend(ClientPackets.joinRoom, (Packet p) =>
+        {
+            p.Write(roomId);
+            p.Write(joinWithCash);
+        }, null);
+    }
+    public void CreateRoom()
+    {
+        if (loginUid == -1)
+        {
+            Debug.LogError("you havn't logged in!");
+            return;
+        }
+        ClientSend.RpcSend(ClientPackets.createRoom, (Packet p) =>
+        {
+
+        }, null);
+    }
+    public void Bid(int amount)
+    {
+        if (playRoom == null)
+        {
+            Debug.LogError("You havn't joined any room yet!");
+            return;
+        }
+        if (loginUid == -1)
+        {
+            Debug.LogError("you havn't logged in!");
+            return;
+        }
+        if (!playRoom.Bid(amount))
+        {
+            Debug.LogError($"invalid bet with amount {amount}");
+            return;
+        }
+    }
+    public void CheckOrFold()
+    {
+        if (playRoom == null)
+        {
+            Debug.LogError("You havn't joined any room yet!");
+            return;
+        }
+        if (loginUid == -1)
+        {
+            Debug.LogError("you havn't logged in!");
+            return;
+        }
+        playRoom.CheckOrFold();
+    }
+    public void UseTimeCard()
+    {
+        if (playRoom == null)
+        {
+            Debug.LogError("You havn't joined any room yet!");
+            return;
+        }
+        if (loginUid == -1)
+        {
+            Debug.LogError("you havn't logged in!");
+            return;
+        }
+        playRoom.UseTimeCard();
+    }
+    public void QuitRoom()
+    {
+        if (playRoom == null)
+        {
+            Debug.LogError("You havn't joined any room yet!");
+            return;
+        }
+        if (loginUid == -1)
+        {
+            Debug.LogError("you havn't logged in!");
+            return;
+        }
+        playRoom.Quit();
     }
     #region client rpc callback
     void ClientRpc_welcomeReceived(IAsyncResult result)
@@ -186,7 +276,10 @@ public class Client : MonoBehaviour
     void ServerRpc_loginCallback(Packet p)
     {
         if (p.ReadBool())
-            Debug.LogWarning($"login success with id {p.ReadInt()}");
+        {
+            loginUid = p.ReadInt();
+            Debug.LogWarning($"login success with id {loginUid}");
+        }
         else
             Debug.LogWarning("login fail");
     }

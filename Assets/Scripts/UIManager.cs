@@ -21,8 +21,7 @@ public class UIManager : MonoBehaviour
     public InputField textField1;
     public InputField textField2;
     public InputField textField3;
-    public InputField textField4;
-    public InputField textField5;
+    public Text bidenSays;
     public Dropdown rpcSelecter;
 
     public void SendRpcRequest()
@@ -39,11 +38,18 @@ public class UIManager : MonoBehaviour
                 Client.instance.DoLogin(Int32.Parse(textField1.text), textField2.text);
                 break;
             case 3:
+                Client.instance.CreateRoom();
                 break;
             case 4:
+                Client.instance.JoinRoom(Int32.Parse(textField1.text), -1);
                 break;
             default:
                 break;
         }
+    }
+
+    public void BidenSays(string says = "我的牌太多了!!!")
+    {
+        bidenSays.text = says;
     }
 }

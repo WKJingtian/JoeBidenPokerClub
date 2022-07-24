@@ -9,6 +9,20 @@ public enum ServerPackets
     welcome = 1,
     loginCallback,
     registerCallback,
+    joinRoomCallback,
+    createRoomCallback,
+    bidCallback,
+    foldCallback,
+    useTimeCardCallback,
+    quitRoomCallback,
+    syncRoomStat,
+    syncAccountStat,
+    syncPlayerStat,
+    syncFlopTurnRiver,
+    syncPlayerHand,
+    requestPlayerAction,
+    playerActionReceived,
+    syncPlayerAccountStat,
 }
 
 /// <summary>Sent from client to server.</summary>
@@ -17,6 +31,12 @@ public enum ClientPackets
     welcomeReceived = 1,
     login,
     register,
+    joinRoom,
+    createRoom,
+    bid,
+    fold,
+    useTimeCard,
+    quitRoom,
 }
 
 public class Packet : IDisposable
