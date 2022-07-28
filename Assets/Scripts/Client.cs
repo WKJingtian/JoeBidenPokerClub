@@ -316,8 +316,8 @@ public class Client : MonoBehaviour
         else
         {
             UIManager.instance.BidenSays($"you fail to join a room");
-            UIManager.instance.roomUI.gameObject.SetActive(false);
-            playRoom = null;
+            //UIManager.instance.roomUI.gameObject.SetActive(false);
+            //playRoom = null;
         }
     }
     void ServerRpc_createRoomCallback(Packet p)
@@ -388,24 +388,43 @@ public class Client : MonoBehaviour
     {
         if (playRoom != null)
         {
-            playRoom.players.Clear();
             for( int i = 0; i < playRoom.players.Capacity; i++ )
             {
                 bool seatHaasPlayer = p.ReadBool();
-                if (seatHaasPlayer)
+                if (playRoom.players.Count > i)
                 {
-                    playRoom.players.Add(new Room.PlayerInGameStat());
-                    playRoom.players[i].uid = p.ReadInt();
-                    playRoom.players[i].moneyInPocket = p.ReadInt();
-                    playRoom.players[i].moneyInPot = p.ReadInt();
-                    playRoom.players[i].hasBidThisRound = p.ReadBool();
-                    playRoom.players[i].hasFolded = p.ReadBool();
-                    playRoom.players[i].ifAllIn = p.ReadBool();
-                    playRoom.players[i].hasQuited = p.ReadBool();
-                    playRoom.players[i].timeCard = p.ReadInt();
+                    if (seatHaasPlayer)
+                    {
+                        if (playRoom.players[i] == null) playRoom.players[i] = new Room.PlayerInGameStat();
+                        playRoom.players[i].uid = p.ReadInt();
+                        playRoom.players[i].moneyInPocket = p.ReadInt();
+                        playRoom.players[i].moneyInPot = p.ReadInt();
+                        playRoom.players[i].hasBidThisRound = p.ReadBool();
+                        playRoom.players[i].hasFolded = p.ReadBool();
+                        playRoom.players[i].ifAllIn = p.ReadBool();
+                        playRoom.players[i].hasQuited = p.ReadBool();
+                        playRoom.players[i].timeCard = p.ReadInt();
+                    }
+                    else
+                        playRoom.players[i] = null;
                 }
                 else
-                    playRoom.players.Add(null);
+                {
+                    if (seatHaasPlayer)
+                    {
+                        playRoom.players.Add(new Room.PlayerInGameStat());
+                        playRoom.players[i].uid = p.ReadInt();
+                        playRoom.players[i].moneyInPocket = p.ReadInt();
+                        playRoom.players[i].moneyInPot = p.ReadInt();
+                        playRoom.players[i].hasBidThisRound = p.ReadBool();
+                        playRoom.players[i].hasFolded = p.ReadBool();
+                        playRoom.players[i].ifAllIn = p.ReadBool();
+                        playRoom.players[i].hasQuited = p.ReadBool();
+                        playRoom.players[i].timeCard = p.ReadInt();
+                    }
+                    else
+                        playRoom.players.Add(null);
+                }
             }
             playRoom.UpdateUI();
         }
@@ -438,17 +457,17 @@ public class Client : MonoBehaviour
             {
                 if (player != null && player.uid == targetId)
                 {
-                    player.hand.Clear();
                     for (int i = 0; i < 2; i++)
                     {
+                        PokerCard temp = new PokerCard();
                         if (p.ReadBool())
-                            player.hand.Add(new PokerCard((PokerCard.Decors)p.ReadInt(), p.ReadInt()));
+                            temp = new PokerCard((PokerCard.Decors)p.ReadInt(), p.ReadInt());
                         else
-                        {
-                            PokerCard temp = new PokerCard();
                             temp.notRevealed = true;
+                        if (player.hand.Count > i)
+                            player.hand[i] = player.hand[i].notRevealed ? temp : player.hand[i];
+                        else
                             player.hand.Add(temp);
-                        }
                     }
                     break;
                 }

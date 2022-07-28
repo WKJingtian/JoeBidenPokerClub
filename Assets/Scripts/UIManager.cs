@@ -38,8 +38,8 @@ public class UIManager : MonoBehaviour
     }
     public void SendRpcRequest()
     {
-        try
-        {
+        //try
+        //{
             switch (rpcSelecter.value)
             {
                 case 0:
@@ -72,18 +72,17 @@ public class UIManager : MonoBehaviour
                 default:
                     break;
             }
-        }
-        catch(Exception e)
-        {
-            BidenSays($"unity error: {e.Message}");
-        }
+        //}
+        //catch(Exception e)
+        //{
+        //    BidenSays($"unity error: {e.Message}");
+        //}
     }
     private Stack<string> bidenWantToSay = new Stack<string>();
     private float bidenClock;
     public static readonly float s_bidenSpeechCd = 3.0f;
     public void BidenSays(string says = "我的牌太多了!!!")
     {
-        Debug.LogWarning(says);
         bidenWantToSay.Push(says);
     }
 }

@@ -5035,6 +5035,7 @@ MonoBehaviour:
   - {fileID: -5490112108248013230, guid: dfe2184a921ad2241ac12bb8cab960cb, type: 3}
   totalPotText: {fileID: 5803365215951581980}
   clockText: {fileID: 5157250170788280248}
+  playerIdentifier: {fileID: 2969282026689899480}
 --- !u!1 &4733232635085004265
 GameObject:
   m_ObjectHideFlags: 0

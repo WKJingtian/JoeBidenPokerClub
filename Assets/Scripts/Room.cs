@@ -36,8 +36,8 @@ public class Room : MonoBehaviour
     }
     roundState curState;
 
-    public List<PokerCard> flopTurnRiver;
-    public List<PlayerInGameStat> players;
+    public List<PokerCard> flopTurnRiver = new List<PokerCard>();
+    public List<PlayerInGameStat> players = new List<PlayerInGameStat>();
     RoomUI myUI;
     private void Awake()
     {
@@ -59,7 +59,7 @@ public class Room : MonoBehaviour
         int max = 0;
         foreach (var p in players)
         {
-            if (p.moneyInPot > max)
+            if (p != null && p.moneyInPot > max)
                 max = p.moneyInPot;
         }
         return max;
@@ -74,7 +74,7 @@ public class Room : MonoBehaviour
         var stat = GetPlayerInfoById(Client.instance.loginUid);
         if (stat != null && !stat.hasQuited && !stat.hasFolded &&
             stat.moneyInPocket >= amount &&
-            (stat.moneyInPot + amount >= HighestBid() || amount == stat.moneyInPocket))
+            (stat.moneyInPot + amount >= HighestBid() || amount >= stat.moneyInPocket))
         {
             ClientSend.RpcSend(ClientPackets.bid, (Packet p) =>
             {

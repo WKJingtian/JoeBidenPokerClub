@@ -10,6 +10,7 @@ public class RoomUI : MonoBehaviour
     [SerializeField] List<Sprite> decorSprites;
     [SerializeField] Text totalPotText;
     [SerializeField] Text clockText;
+    [SerializeField] Image playerIdentifier;
     Vector2[] playerPos =
     {
         new Vector2(-180,  135), new Vector2(-60,  135),new Vector2(60,  135),new Vector2(180,  135),
@@ -116,6 +117,9 @@ public class RoomUI : MonoBehaviour
                 pRoot.Find("position").GetComponent<Text>().text = position;
                 pRoot.Find("hand1").gameObject.SetActive(true);
                 pRoot.Find("hand2").gameObject.SetActive(true);
+
+                if (room.players[i].uid == Client.instance.loginUid)
+                    playerIdentifier.transform.localPosition = playerPos[i];
             }
         }
         totalPotText.text = $"µ×³Ø:{prize}";
@@ -139,7 +143,8 @@ public class RoomUI : MonoBehaviour
             }
             else
             {
-                if (room.players[i].hand.Count > 0)
+                if (room.players[i].hand.Count > 0 &&
+                    !room.players[i].hand[0].notRevealed)
                 {
                     decorImg1.sprite = decorSprites[(int)room.players[i].hand[0].decor];
                     decorImg1.color = Color.white;
@@ -150,7 +155,8 @@ public class RoomUI : MonoBehaviour
                     decorImg1.color = Color.black;
                     pointTxt1.text = "?";
                 }
-                if (room.players[i].hand.Count > 1)
+                if (room.players[i].hand.Count > 1 &&
+                    !room.players[i].hand[1].notRevealed)
                 {
                     decorImg2.sprite = decorSprites[(int)room.players[i].hand[1].decor];
                     decorImg2.color = Color.white;
