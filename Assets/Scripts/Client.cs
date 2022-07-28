@@ -457,6 +457,7 @@ public class Client : MonoBehaviour
             {
                 if (player != null && player.uid == targetId)
                 {
+                    player.hand.Clear();
                     for (int i = 0; i < 2; i++)
                     {
                         PokerCard temp = new PokerCard();
@@ -464,10 +465,7 @@ public class Client : MonoBehaviour
                             temp = new PokerCard((PokerCard.Decors)p.ReadInt(), p.ReadInt());
                         else
                             temp.notRevealed = true;
-                        if (player.hand.Count > i)
-                            player.hand[i] = player.hand[i].notRevealed ? temp : player.hand[i];
-                        else
-                            player.hand.Add(temp);
+                        player.hand.Add(temp);
                     }
                     break;
                 }

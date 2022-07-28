@@ -25,7 +25,7 @@ public class RoomUI : MonoBehaviour
     private void Update()
     {
         timer -= Time.deltaTime;
-        clockText.text = timer.ToString();
+        clockText.text = ((int)timer).ToString();
     }
     public void ShowPoker()
     {

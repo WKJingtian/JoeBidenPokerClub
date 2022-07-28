@@ -124,16 +124,11 @@ public class Room : MonoBehaviour
     }
     public bool Quit()
     {
-        var stat = GetPlayerInfoById(Client.instance.loginUid);
-        if (stat != null && !stat.hasQuited)
+        ClientSend.RpcSend(ClientPackets.quitRoom, (Packet p) =>
         {
-            ClientSend.RpcSend(ClientPackets.quitRoom, (Packet p) =>
-            {
-                p.Write(Client.instance.loginUid);
-            }, null);
-            return true;
-        }
-        else return false;
+            p.Write(Client.instance.loginUid);
+        }, null);
+        return true;
     }
     public void UpdateUI()
     {
