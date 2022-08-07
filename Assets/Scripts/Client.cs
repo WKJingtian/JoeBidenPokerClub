@@ -57,6 +57,10 @@ public class Client : MonoBehaviour
         serverMessageHandlerMap[ServerPackets.syncPlayerHand] = ServerRpc_syncPlayerHand;
         serverMessageHandlerMap[ServerPackets.requestPlayerAction] = ServerRpc_requestPlayerAction;
         serverMessageHandlerMap[ServerPackets.congrateWinner] = ServerRpc_congrateWinner;
+        serverMessageHandlerMap[ServerPackets.dispatchChat] = ServerRpc_dispatchChat;
+        serverMessageHandlerMap[ServerPackets.sendAccountInfo] = ServerRpc_sendAccountInfo;
+        serverMessageHandlerMap[ServerPackets.sendRoomList] = ServerRpc_sendRoomList;
+        serverMessageHandlerMap[ServerPackets.observeRoomCallback] = ServerRpc_observeRoomCallback;
 
         // connect to the server
         Connect();
@@ -486,6 +490,22 @@ public class Client : MonoBehaviour
         if (targetUid == loginUid)
             UIManager.instance.BidenSays($"Congradulation! you are the\n{isWinner} of this round");
         if (playRoom != null) playRoom.UpdateUI();
+    }
+    void ServerRpc_dispatchChat(Packet p)
+    {
+
+    }
+    void ServerRpc_sendAccountInfo(Packet p)
+    {
+
+    }
+    void ServerRpc_sendRoomList(Packet p)
+    {
+
+    }
+    void ServerRpc_observeRoomCallback(Packet p)
+    {
+
     }
     #endregion
 }

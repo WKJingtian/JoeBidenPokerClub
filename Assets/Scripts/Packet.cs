@@ -22,6 +22,10 @@ public enum ServerPackets
     syncPlayerHand,
     requestPlayerAction,
     congrateWinner,
+    dispatchChat,
+    sendAccountInfo,
+    sendRoomList,
+    observeRoomCallback,
 }
 
 /// <summary>Sent from client to server.</summary>
@@ -36,6 +40,10 @@ public enum ClientPackets
     fold,
     useTimeCard,
     quitRoom,
+    sendChat,
+    requestAccountInfo,
+    requestRoomList,
+    observeRoom,
 }
 
 public class Packet : IDisposable
