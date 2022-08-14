@@ -65,6 +65,11 @@
     <Compile Include="Assets\Scripts\ThreadManager.cs" />
     <Compile Include="Assets\Scripts\PokerCard.cs" />
     <Compile Include="Assets\Scripts\Packet.cs" />
+    <Compile Include="Assets\Scripts\BidenUI.cs" />
+    <Compile Include="Assets\Scripts\LoginUI.cs" />
+    <Compile Include="Assets\Scripts\RegisterUI.cs" />
+    <Compile Include="Assets\Scripts\LobbyUI.cs" />
+    <Compile Include="Assets\Scripts\ProfileUI.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="UnityEngine">

@@ -17,4 +17,17 @@ public class GameManager : MonoBehaviour
             return;
         }
     }
+
+    private void Start()
+    {
+        Debug.LogWarning("Welcome to Joe Biden's Poker Club");
+        UIManager.instance.Start();
+        LoginUI login = UIManager.instance.OpenUI(UIManager.UIPrefab.loginUI).GetComponent<LoginUI>();
+        if (PlayerPrefs.HasKey("userAccount") &&
+            PlayerPrefs.HasKey("userPassword"))
+        {
+            login.accountField.text = PlayerPrefs.GetString("userAccount");
+            login.passwordField.text = PlayerPrefs.GetString("userPassword");
+        }
+    }
 }

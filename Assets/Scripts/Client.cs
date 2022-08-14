@@ -314,8 +314,8 @@ public class Client : MonoBehaviour
         {
             int joinRoomIdx = p.ReadInt();
             UIManager.instance.BidenSays($"you have successfully joined room {joinRoomIdx}");
-            UIManager.instance.roomUI.gameObject.SetActive(true);
-            playRoom = UIManager.instance.roomUI.GetComponent<Room>();
+            playRoom = UIManager.instance.OpenUI(UIManager.UIPrefab.gameUI)
+                .GetComponent<Room>();
         }
         else
         {
@@ -365,7 +365,7 @@ public class Client : MonoBehaviour
         if (p.ReadBool())
         {
             UIManager.instance.BidenSays($"quit room success");
-            UIManager.instance.roomUI.gameObject.SetActive(false);
+            UIManager.instance.CloseUI(UIManager.UIPrefab.gameUI);
             playRoom = null;
         }
         else

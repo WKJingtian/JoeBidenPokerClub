@@ -7,6 +7,62 @@ using System.Net;
 using System.Net.Sockets;
 public class UIManager : MonoBehaviour
 {
+    public enum UIPrefab
+    {
+        loginUI = 0,
+        registerUI = 1,
+        lobbyUI = 2,
+        gameUI = 3,
+        profileUI = 4,
+        bidenUI = 5,
+    }
+    public enum UILevel
+    {
+        TOP = 0,
+        MIDDLE = 1,
+        BOTTOM = 2
+    }
+    public class UITemplate
+    {
+        public UITemplate(string p, UILevel l)
+        {
+            path = p;
+            level = l;
+        }
+        public string path;
+        public UILevel level;
+    }
+    private Dictionary<UIPrefab, UITemplate> templates = 
+        new Dictionary<UIPrefab, UITemplate>();
+    public Dictionary<UIPrefab, GameObject> uiInstances =
+        new Dictionary<UIPrefab, GameObject>();
+    private Dictionary<UILevel, Transform> levelRotts =
+        new Dictionary<UILevel, Transform>();
+    public GameObject OpenUI(UIPrefab ui)
+    {
+        if (uiInstances.ContainsKey(ui) &&
+            uiInstances[ui] != null)
+        {
+            uiInstances[ui].SetActive(true);
+            return uiInstances[ui];
+        }
+        else if (templates.ContainsKey(ui))
+        {
+            GameObject uiObj = Resources.Load(templates[ui].path) as GameObject;
+            uiInstances[ui] = Instantiate(uiObj, levelRotts[templates[ui].level]);
+            return uiInstances[ui];
+        }
+        return null;
+    }
+    public void CloseUI(UIPrefab ui)
+    {
+        if (uiInstances.ContainsKey(ui) &&
+            uiInstances[ui] != null)
+        {
+            uiInstances[ui].SetActive(false);
+        }
+    }
+
     public static UIManager instance;
     private void Awake()
     {
@@ -18,71 +74,58 @@ public class UIManager : MonoBehaviour
             return;
         }
     }
-    public InputField textField1;
-    public InputField textField2;
-    public InputField textField3;
-    public Text bidenSays;
-    public Dropdown rpcSelecter;
-    public RoomUI roomUI;
-    private void Update()
-    {
-        bidenClock -= Time.deltaTime;
-        if (bidenWantToSay.Count > 0 &&
-            bidenClock <= 0)
-        {
-            bidenClock = s_bidenSpeechCd;
-            string says = bidenWantToSay.Peek();
-            bidenSays.text = says;
-            bidenWantToSay.Pop();
-        }
-    }
     public void SendRpcRequest()
     {
-        //try
+        //switch (rpcSelecter.value)
         //{
-            switch (rpcSelecter.value)
-            {
-                case 0:
-                    //Client.instance.Connect();
-                    break;
-                case 1:
-                    Client.instance.DoRegister(textField1.text, textField2.text);
-                    break;
-                case 2:
-                    Client.instance.DoLogin(Int32.Parse(textField1.text), textField2.text);
-                    break;
-                case 3:
-                    Client.instance.CreateRoom();
-                    break;
-                case 4:
-                    Client.instance.JoinRoom(Int32.Parse(textField1.text), -1);
-                    break;
-                case 5:
-                    Client.instance.Bid(Int32.Parse(textField1.text));
-                    break;
-                case 6:
-                    Client.instance.CheckOrFold();
-                    break;
-                case 7:
-                    Client.instance.UseTimeCard();
-                    break;
-                case 8:
-                    Client.instance.QuitRoom();
-                    break;
-                default:
-                    break;
-            }
-        //}
-        //catch(Exception e)
-        //{
-        //    BidenSays($"unity error: {e.Message}");
+        //    case 3:
+        //        Client.instance.CreateRoom();
+        //        break;
+        //    case 4:
+        //        Client.instance.JoinRoom(Int32.Parse(textField1.text), -1);
+        //        break;
+        //    case 5:
+        //        Client.instance.Bid(Int32.Parse(textField1.text));
+        //        break;
+        //    case 6:
+        //        Client.instance.CheckOrFold();
+        //        break;
+        //    case 7:
+        //        Client.instance.UseTimeCard();
+        //        break;
+        //    case 8:
+        //        Client.instance.QuitRoom();
+        //        break;
+        //    default:
+        //        break;
         //}
     }
-    private Stack<string> bidenWantToSay = new Stack<string>();
-    private float bidenClock;
-    public static readonly float s_bidenSpeechCd = 3.0f;
     public void BidenSays(string says = "我的牌太多了!!!")
     {
-        bidenWantToSay.Push(says);
+        if (!uiInstances.ContainsKey(UIPrefab.bidenUI) ||
+            uiInstances[UIPrefab.bidenUI] == null)
+            OpenUI(UIPrefab.bidenUI);
+        uiInstances[UIPrefab.bidenUI].
+            GetComponent<BidenUI>().
+            BidenSays(says);
+    }
+    public void Start()
+    {
+        templates[UIPrefab.gameUI] =
+            new UITemplate("Prefabs/RoomUI", UILevel.BOTTOM);
+        templates[UIPrefab.loginUI] =
+            new UITemplate("Prefabs/LoginUI", UILevel.BOTTOM);
+        templates[UIPrefab.bidenUI] =
+            new UITemplate("Prefabs/BidenUI", UILevel.TOP);
+        templates[UIPrefab.registerUI] =
+            new UITemplate("Prefabs/RegisterUI", UILevel.MIDDLE);
+        templates[UIPrefab.lobbyUI] =
+            new UITemplate("Prefabs/LobbyUI", UILevel.BOTTOM);
+        templates[UIPrefab.profileUI] =
+            new UITemplate("Prefabs/ProfileUI", UILevel.MIDDLE);
+
+        levelRotts[UILevel.TOP] = transform.Find("topRoot");
+        levelRotts[UILevel.MIDDLE] = transform.Find("middleRoot");
+        levelRotts[UILevel.BOTTOM] = transform.Find("bottomRoot");
     }
 }
