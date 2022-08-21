@@ -78,12 +78,6 @@ public class UIManager : MonoBehaviour
     {
         //switch (rpcSelecter.value)
         //{
-        //    case 3:
-        //        Client.instance.CreateRoom();
-        //        break;
-        //    case 4:
-        //        Client.instance.JoinRoom(Int32.Parse(textField1.text), -1);
-        //        break;
         //    case 5:
         //        Client.instance.Bid(Int32.Parse(textField1.text));
         //        break;
@@ -127,5 +121,6 @@ public class UIManager : MonoBehaviour
         levelRotts[UILevel.TOP] = transform.Find("topRoot");
         levelRotts[UILevel.MIDDLE] = transform.Find("middleRoot");
         levelRotts[UILevel.BOTTOM] = transform.Find("bottomRoot");
+        UIManager.instance.BidenSays("Welcome to Joe Biden's Poker Club");
     }
 }

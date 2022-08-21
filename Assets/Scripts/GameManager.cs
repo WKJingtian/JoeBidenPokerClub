@@ -20,7 +20,7 @@ public class GameManager : MonoBehaviour
 
     private void Start()
     {
-        Debug.LogWarning("Welcome to Joe Biden's Poker Club");
+        Application.targetFrameRate = 30;
         UIManager.instance.Start();
         LoginUI login = UIManager.instance.OpenUI(UIManager.UIPrefab.loginUI).GetComponent<LoginUI>();
         if (PlayerPrefs.HasKey("userAccount") &&

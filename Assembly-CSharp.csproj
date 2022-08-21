@@ -61,15 +61,16 @@
     <Compile Include="Assets\Scripts\ClientSend.cs" />
     <Compile Include="Assets\Scripts\Client.cs" />
     <Compile Include="Assets\Scripts\UIManager.cs" />
+    <Compile Include="Assets\Scripts\LoginUI.cs" />
+    <Compile Include="Assets\Scripts\BidenUI.cs" />
     <Compile Include="Assets\Scripts\RoomUI.cs" />
     <Compile Include="Assets\Scripts\ThreadManager.cs" />
     <Compile Include="Assets\Scripts\PokerCard.cs" />
     <Compile Include="Assets\Scripts\Packet.cs" />
-    <Compile Include="Assets\Scripts\BidenUI.cs" />
-    <Compile Include="Assets\Scripts\LoginUI.cs" />
-    <Compile Include="Assets\Scripts\RegisterUI.cs" />
-    <Compile Include="Assets\Scripts\LobbyUI.cs" />
     <Compile Include="Assets\Scripts\ProfileUI.cs" />
+    <Compile Include="Assets\Scripts\LobbyUI.cs" />
+    <Compile Include="Assets\Scripts\RegisterUI.cs" />
+    <Compile Include="Assets\Scripts\RoomInfoUI.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="UnityEngine">

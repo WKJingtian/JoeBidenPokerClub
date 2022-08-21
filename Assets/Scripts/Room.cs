@@ -38,6 +38,7 @@ public class Room : MonoBehaviour
 
     public List<PokerCard> flopTurnRiver = new List<PokerCard>();
     public List<PlayerInGameStat> players = new List<PlayerInGameStat>();
+    public List<PlayerInGameStat> ib = new List<PlayerInGameStat>();
     RoomUI myUI;
     private void Awake()
     {

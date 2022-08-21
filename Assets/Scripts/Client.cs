@@ -193,6 +193,12 @@ public class Client : MonoBehaviour
             p.Write(password);
         }, null);
     }
+    public void RequestRoomList()
+    {
+        ClientSend.RpcSend(ClientPackets.requestRoomList, (Packet p) =>
+        {
+        }, null);
+    }
     public void JoinRoom(int joinWithCash, int roomId = -1)
     {
         if (loginUid == -1)
@@ -206,6 +212,18 @@ public class Client : MonoBehaviour
             p.Write(joinWithCash);
         }, null);
     }
+    public void ObRoom(int roomId = -1)
+    {
+        if (loginUid == -1)
+        {
+            UIManager.instance.BidenSays("you havn't logged in!");
+            return;
+        }
+        ClientSend.RpcSend(ClientPackets.observeRoom, (Packet p) =>
+        {
+            p.Write(roomId);
+        }, null);
+    }
     public void CreateRoom()
     {
         if (loginUid == -1)
@@ -216,6 +234,18 @@ public class Client : MonoBehaviour
         ClientSend.RpcSend(ClientPackets.createRoom, (Packet p) =>
         {
 
+        }, null);
+    }
+    public void CheckProfile(int uid)
+    {
+        if (loginUid == -1)
+        {
+            UIManager.instance.BidenSays("you havn't logged in!");
+            return;
+        }
+        ClientSend.RpcSend(ClientPackets.requestAccountInfo, (Packet p) =>
+        {
+            p.Write(uid);
         }, null);
     }
     public void Bid(int amount)
@@ -297,6 +327,9 @@ public class Client : MonoBehaviour
         {
             loginUid = p.ReadInt();
             UIManager.instance.BidenSays($"login success with id {loginUid}");
+            UIManager.instance.CloseUI(UIManager.UIPrefab.registerUI);
+            UIManager.instance.CloseUI(UIManager.UIPrefab.loginUI);
+            UIManager.instance.OpenUI(UIManager.UIPrefab.lobbyUI);
         }
         else
             UIManager.instance.BidenSays("login fail");
@@ -304,7 +337,13 @@ public class Client : MonoBehaviour
     void ServerRpc_registerCallback(Packet p)
     {
         if (p.ReadBool())
-            UIManager.instance.BidenSays($"register success with uid {p.ReadInt()}");
+        {
+            loginUid = p.ReadInt();
+            UIManager.instance.BidenSays($"register success with uid {loginUid}");
+            UIManager.instance.CloseUI(UIManager.UIPrefab.registerUI);
+            UIManager.instance.CloseUI(UIManager.UIPrefab.loginUI);
+            UIManager.instance.OpenUI(UIManager.UIPrefab.lobbyUI);
+        }
         else
             UIManager.instance.BidenSays("register fail");
     }
@@ -320,8 +359,6 @@ public class Client : MonoBehaviour
         else
         {
             UIManager.instance.BidenSays($"you fail to join a room");
-            //UIManager.instance.roomUI.gameObject.SetActive(false);
-            //playRoom = null;
         }
     }
     void ServerRpc_createRoomCallback(Packet p)
@@ -493,7 +530,7 @@ public class Client : MonoBehaviour
     }
     void ServerRpc_dispatchChat(Packet p)
     {
-
+        //todo
     }
     void ServerRpc_sendAccountInfo(Packet p)
     {
@@ -501,11 +538,32 @@ public class Client : MonoBehaviour
     }
     void ServerRpc_sendRoomList(Packet p)
     {
+        GameObject obj = UIManager.instance.uiInstances.ContainsKey(UIManager.UIPrefab.lobbyUI) ?
+            UIManager.instance.uiInstances[UIManager.UIPrefab.lobbyUI] : null;
+        if (obj && obj.TryGetComponent<LobbyUI>(out var ui))
+        {
 
+        } else return;
+        int count = p.ReadInt();
+        for (int i =0; i < count; i++)
+        {
+            RoomInfoUI.RoomInfo info;
+            info.roomID = p.ReadInt();
+            info.name = p.ReadString();
+            info.maxPlayer = p.ReadInt();
+            info.curPlayer = p.ReadInt();
+            info.maxOb = p.ReadInt();
+            info.curOb = p.ReadInt();
+            info.sb = p.ReadInt();
+            info.roundTime = p.ReadInt();
+            info.roundPerTimeCard = p.ReadInt();
+            info.roundPassed = p.ReadInt();
+            ui.AddRoomToList(info);
+        }
     }
     void ServerRpc_observeRoomCallback(Packet p)
     {
-
+        //todo
     }
     #endregion
 }
