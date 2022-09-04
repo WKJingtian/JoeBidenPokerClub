@@ -16,7 +16,6 @@ public enum ServerPackets
     useTimeCardCallback,
     quitRoomCallback,
     syncRoomStat,
-    syncAccountStat,
     syncPlayerStat,
     syncFlopTurnRiver,
     syncPlayerHand,

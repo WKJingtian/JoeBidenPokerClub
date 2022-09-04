@@ -1,12 +1,14 @@
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System;
+using UnityEngine.UI;
 
 public class Room : MonoBehaviour
 {
     public class PlayerInGameStat
     {
         public int uid;
+        public string name;
         public int moneyInPocket;
         public int moneyInPot;
         public bool hasBidThisRound;
@@ -39,6 +41,7 @@ public class Room : MonoBehaviour
     public List<PokerCard> flopTurnRiver = new List<PokerCard>();
     public List<PlayerInGameStat> players = new List<PlayerInGameStat>();
     public List<PlayerInGameStat> ib = new List<PlayerInGameStat>();
+    [SerializeField] private Text bidField;
     RoomUI myUI;
     private void Awake()
     {
@@ -65,11 +68,65 @@ public class Room : MonoBehaviour
         }
         return max;
     }
+    public void DoAction(int actionId)
+    {
+        bool actionSuccess = false;
+        switch (actionId)
+        {
+            case 0:
+                actionSuccess = UseTimeCard();
+                break;
+            case 1:
+                actionSuccess = CheckOrFold();
+                break;
+            case 2:
+                try
+                {
+                    actionSuccess = Bid(Int32.Parse(bidField.text));
+                }
+                catch (Exception e) { }
+                break;
+            case 3:
+                actionSuccess = Call();
+                break;
+            case 4:
+                actionSuccess = Allin();
+                break;
+            case 5:
+                actionSuccess = Quit();
+                break;
+            default:
+                break;
+        }
+        if(!actionSuccess)
+            UIManager.instance.BidenSays("Action Failed!");
+    }
+    public bool Allin()
+    {
+        var stat = GetPlayerInfoById(Client.instance.loginUid);
+        if (stat != null && !stat.hasQuited && !stat.hasFolded)
+        {
+            return Bid(stat.moneyInPocket);
+        }
+        return false;
+    }
+    public bool Call()
+    {
+        var stat = GetPlayerInfoById(Client.instance.loginUid);
+        if (stat != null && !stat.hasQuited && !stat.hasFolded)
+        {
+            int amount = HighestBid() - stat.moneyInPot;
+            if (amount > 0)
+                return Bid(amount);
+            else return CheckOrFold();
+        }
+        return false;
+    }
     public bool Bid(int amount)
     {
         if (!myTurn)
         {
-            Debug.LogError("Now is not your time to make a move");
+            UIManager.instance.BidenSays("Now is not your time to make a move");
             return false;
         }
         var stat = GetPlayerInfoById(Client.instance.loginUid);
@@ -90,7 +147,7 @@ public class Room : MonoBehaviour
     {
         if (!myTurn)
         {
-            Debug.LogError("Now is not your time to make a move");
+            UIManager.instance.BidenSays("Now is not your time to make a move");
             return false;
         }
         var stat = GetPlayerInfoById(Client.instance.loginUid);
@@ -100,7 +157,7 @@ public class Room : MonoBehaviour
             {
                 p.Write(Client.instance.loginUid);
             }, null);
-            return stat.moneyInPot >= HighestBid();
+            return true;
         }
         else return false;
     }
@@ -108,7 +165,7 @@ public class Room : MonoBehaviour
     {
         if (!myTurn)
         {
-            Debug.LogError("Now is not your time to make a move");
+            UIManager.instance.BidenSays("Now is not your time to make a move");
             return false;
         }
         var stat = GetPlayerInfoById(Client.instance.loginUid);

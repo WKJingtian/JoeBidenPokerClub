@@ -15,6 +15,7 @@ public class UIManager : MonoBehaviour
         gameUI = 3,
         profileUI = 4,
         bidenUI = 5,
+        roomCreateUI = 6,
     }
     public enum UILevel
     {
@@ -117,6 +118,8 @@ public class UIManager : MonoBehaviour
             new UITemplate("Prefabs/LobbyUI", UILevel.BOTTOM);
         templates[UIPrefab.profileUI] =
             new UITemplate("Prefabs/ProfileUI", UILevel.MIDDLE);
+        templates[UIPrefab.roomCreateUI] =
+            new UITemplate("Prefabs/CreateRoomUI", UILevel.MIDDLE);
 
         levelRotts[UILevel.TOP] = transform.Find("topRoot");
         levelRotts[UILevel.MIDDLE] = transform.Find("middleRoot");

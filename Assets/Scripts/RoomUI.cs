@@ -10,12 +10,8 @@ public class RoomUI : MonoBehaviour
     [SerializeField] List<Sprite> decorSprites;
     [SerializeField] Text totalPotText;
     [SerializeField] Text clockText;
-    [SerializeField] Image playerIdentifier;
-    Vector2[] playerPos =
-    {
-        new Vector2(-180,  135), new Vector2(-60,  135),new Vector2(60,  135),new Vector2(180,  135),
-        new Vector2(-180, -135), new Vector2(-60, -135),new Vector2(60, -135),new Vector2(180, -135),
-    };
+    [SerializeField] Text playerTimeCard;
+    [SerializeField] Text roomRoundNum;
     Room room;
     private void Awake()
     {
@@ -61,9 +57,21 @@ public class RoomUI : MonoBehaviour
     public void ShowPlayer()
     {
         int prize = 0;
+        int playerPos = 0;
         for (int i = 0; i < room.players.Capacity; i++)
         {
-            Transform pRoot = playerRoot.Find($"p{i + 1}");
+            if (i < room.players.Count &&
+                room.players[i] != null &&
+                room.players[i].uid == Client.instance.loginUid)
+            {
+                playerPos = i;
+                roomRoundNum.text = $"you have\n{room.players[i].timeCard} timecards";
+                break;
+            }
+        }
+        for (int i = 0; i < room.players.Capacity; i++)
+        {
+            Transform pRoot = playerRoot.Find($"p{(i - playerPos) % 8 + 1}");
             if (i >= room.players.Count ||
                 room.players[i] == null)
             {
@@ -89,8 +97,8 @@ public class RoomUI : MonoBehaviour
                     statue = "quitted";
                 else if (room.players[i].hasFolded)
                     statue = "folded";
-                pRoot.Find("statue").GetComponent<Text>().text = statue;
-                pRoot.Find("action").GetComponent<Text>().text = "";
+                pRoot.Find("statue").GetComponent<Text>().text = room.players[i].name;
+                pRoot.Find("action").GetComponent<Text>().text = statue;
                 int disFromSb = 0;
                 string position = "";
                 int ii = i, loopCount = 0;
@@ -117,9 +125,6 @@ public class RoomUI : MonoBehaviour
                 pRoot.Find("position").GetComponent<Text>().text = position;
                 pRoot.Find("hand1").gameObject.SetActive(true);
                 pRoot.Find("hand2").gameObject.SetActive(true);
-
-                if (room.players[i].uid == Client.instance.loginUid)
-                    playerIdentifier.transform.localPosition = playerPos[i];
             }
         }
         totalPotText.text = $"µ×³Ø:{prize}";
@@ -172,6 +177,7 @@ public class RoomUI : MonoBehaviour
     }
     public void ShowStat()
     {
+        roomRoundNum.text = $"Round\nNo. {room.roundNum}";
         timer = room.timer;
     }
 }

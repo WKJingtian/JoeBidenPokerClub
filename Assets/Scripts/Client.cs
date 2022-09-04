@@ -51,7 +51,6 @@ public class Client : MonoBehaviour
         serverMessageHandlerMap[ServerPackets.useTimeCardCallback] = ServerRpc_useTimeCardCallback;
         serverMessageHandlerMap[ServerPackets.quitRoomCallback] = ServerRpc_quitRoomCallback;
         serverMessageHandlerMap[ServerPackets.syncRoomStat] = ServerRpc_syncRoomStat;
-        serverMessageHandlerMap[ServerPackets.syncAccountStat] = ServerRpc_syncAccountStat;
         serverMessageHandlerMap[ServerPackets.syncPlayerStat] = ServerRpc_syncPlayerStat;
         serverMessageHandlerMap[ServerPackets.syncFlopTurnRiver] = ServerRpc_syncFlopTurnRiver;
         serverMessageHandlerMap[ServerPackets.syncPlayerHand] = ServerRpc_syncPlayerHand;
@@ -224,7 +223,7 @@ public class Client : MonoBehaviour
             p.Write(roomId);
         }, null);
     }
-    public void CreateRoom()
+    public void CreateRoom(string name, int sb, int time, int rptc, int pLimit, int oLimit)
     {
         if (loginUid == -1)
         {
@@ -233,7 +232,12 @@ public class Client : MonoBehaviour
         }
         ClientSend.RpcSend(ClientPackets.createRoom, (Packet p) =>
         {
-
+            p.Write(name);
+            p.Write(sb);
+            p.Write(time);
+            p.Write(rptc);
+            p.Write(pLimit);
+            p.Write(oLimit);
         }, null);
     }
     public void CheckProfile(int uid)
@@ -247,66 +251,6 @@ public class Client : MonoBehaviour
         {
             p.Write(uid);
         }, null);
-    }
-    public void Bid(int amount)
-    {
-        if (playRoom == null)
-        {
-            UIManager.instance.BidenSays("You havn't joined any room yet!");
-            return;
-        }
-        if (loginUid == -1)
-        {
-            UIManager.instance.BidenSays("you havn't logged in!");
-            return;
-        }
-        if (!playRoom.Bid(amount))
-        {
-            UIManager.instance.BidenSays($"invalid bet with amount {amount}");
-            return;
-        }
-    }
-    public void CheckOrFold()
-    {
-        if (playRoom == null)
-        {
-            UIManager.instance.BidenSays("You havn't joined any room yet!");
-            return;
-        }
-        if (loginUid == -1)
-        {
-            UIManager.instance.BidenSays("you havn't logged in!");
-            return;
-        }
-        playRoom.CheckOrFold();
-    }
-    public void UseTimeCard()
-    {
-        if (playRoom == null)
-        {
-            UIManager.instance.BidenSays("You havn't joined any room yet!");
-            return;
-        }
-        if (loginUid == -1)
-        {
-            UIManager.instance.BidenSays("you havn't logged in!");
-            return;
-        }
-        playRoom.UseTimeCard();
-    }
-    public void QuitRoom()
-    {
-        if (playRoom == null)
-        {
-            UIManager.instance.BidenSays("You havn't joined any room yet!");
-            return;
-        }
-        if (loginUid == -1)
-        {
-            UIManager.instance.BidenSays("you havn't logged in!");
-            return;
-        }
-        playRoom.Quit();
     }
     #region client rpc callback
     void ClientRpc_welcomeReceived(IAsyncResult result)
@@ -421,10 +365,6 @@ public class Client : MonoBehaviour
             playRoom.UpdateUI();
         }
     }
-    void ServerRpc_syncAccountStat(Packet p)
-    {
-        // temporarily not used
-    }
     void ServerRpc_syncPlayerStat(Packet p)
     {
         if (playRoom != null)
@@ -438,6 +378,7 @@ public class Client : MonoBehaviour
                     {
                         if (playRoom.players[i] == null) playRoom.players[i] = new Room.PlayerInGameStat();
                         playRoom.players[i].uid = p.ReadInt();
+                        playRoom.players[i].name = p.ReadString();
                         playRoom.players[i].moneyInPocket = p.ReadInt();
                         playRoom.players[i].moneyInPot = p.ReadInt();
                         playRoom.players[i].hasBidThisRound = p.ReadBool();
@@ -455,6 +396,7 @@ public class Client : MonoBehaviour
                     {
                         playRoom.players.Add(new Room.PlayerInGameStat());
                         playRoom.players[i].uid = p.ReadInt();
+                        playRoom.players[i].name = p.ReadString();
                         playRoom.players[i].moneyInPocket = p.ReadInt();
                         playRoom.players[i].moneyInPot = p.ReadInt();
                         playRoom.players[i].hasBidThisRound = p.ReadBool();
@@ -534,7 +476,16 @@ public class Client : MonoBehaviour
     }
     void ServerRpc_sendAccountInfo(Packet p)
     {
-
+        bool playerFound = p.ReadBool();
+        if (playerFound)
+        {
+            var obj = UIManager.instance.OpenUI(UIManager.UIPrefab.profileUI);
+            if (obj && obj.TryGetComponent<ProfileUI>(out var pui))
+                pui.SetUser(p.ReadInt(), p.ReadString(), p.ReadInt(), p.ReadFloat(),
+                    p.ReadInt(), p.ReadInt(), p.ReadInt(), p.ReadFloat());
+        }
+        else
+            UIManager.instance.BidenSays("找不到你想找的玩家");
     }
     void ServerRpc_sendRoomList(Packet p)
     {

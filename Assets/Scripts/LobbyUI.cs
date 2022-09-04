@@ -9,6 +9,7 @@ public class LobbyUI : MonoBehaviour
     [SerializeField] private Transform roomInfoUiRoot;
     [SerializeField] private Text moneyInputField;
     [SerializeField] private Text profileToCheckField;
+    [SerializeField] private Text playerIdField;
     public int MoneyToBring()
     {
         try
@@ -23,6 +24,7 @@ public class LobbyUI : MonoBehaviour
     private void OnEnable()
     {
         RefreshRoomList();
+        playerIdField.text = $"ID: {Client.instance.loginUid}";
     }
     public void RefreshRoomList()
     {
@@ -43,15 +45,18 @@ public class LobbyUI : MonoBehaviour
     {
         try
         {
-            int pid = Int32.Parse(profileToCheckField.text);
+            int pid;
+            if (profileToCheckField.text == "")
+                pid = Client.instance.loginUid;
+            else 
+                pid= Int32.Parse(profileToCheckField.text);
             Client.instance.CheckProfile(pid);
         }
         catch (Exception e) { Client.instance.CheckProfile(Client.instance.loginUid);  }
     }
     public void CreateRoom()
     {
-        // open the create room ui instead of creating a default room
-        Client.instance.CreateRoom();
+        UIManager.instance.OpenUI(UIManager.UIPrefab.roomCreateUI);
     }
     public void JoinAnyRoom()
     {

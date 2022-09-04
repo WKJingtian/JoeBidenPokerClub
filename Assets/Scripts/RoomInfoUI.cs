@@ -26,15 +26,15 @@ public class RoomInfoUI : MonoBehaviour
     [HideInInspector]public LobbyUI lobby;
     public void DoJoinRoom()
     {
-        //if (room.sb <= 0 ||
-        //    !lobby ||
-        //    lobby.MoneyToBring() < room.sb * 30)
-        //{
-        //    UIManager.instance.BidenSays("You mast have at least 15bb to join a room");
-        //    return;
-        //}
-        //Client.instance.JoinRoom(lobby.MoneyToBring(), room.roomID);
-        Client.instance.JoinRoom(1000, room.roomID);
+        if (room.sb <= 0 ||
+            !lobby ||
+            lobby.MoneyToBring() < room.sb * 30)
+        {
+            UIManager.instance.BidenSays("You mast have at least 15bb to join a room");
+            return;
+        }
+        Client.instance.JoinRoom(lobby.MoneyToBring(), room.roomID);
+        //Client.instance.JoinRoom(1000, room.roomID);
     }
     public void DoObRoom()
     {
