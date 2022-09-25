@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 using System;
 using System.Net;
 using System.Net.Sockets;
@@ -60,9 +61,17 @@ public class Client : MonoBehaviour
         serverMessageHandlerMap[ServerPackets.sendAccountInfo] = ServerRpc_sendAccountInfo;
         serverMessageHandlerMap[ServerPackets.sendRoomList] = ServerRpc_sendRoomList;
         serverMessageHandlerMap[ServerPackets.observeRoomCallback] = ServerRpc_observeRoomCallback;
+    }
 
+    [SerializeField] private InputField ipField;
+    [SerializeField] private Button connectBtn;
+    public void DoConnect()
+    {
+        serverIp = ipField.text;
         // connect to the server
         Connect();
+        ipField.gameObject.SetActive(false);
+        connectBtn.gameObject.SetActive(false);
     }
     private void OnApplicationQuit()
     {
