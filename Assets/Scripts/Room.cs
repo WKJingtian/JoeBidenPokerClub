@@ -71,6 +71,7 @@ public class Room : MonoBehaviour
     public void DoAction(int actionId)
     {
         bool actionSuccess = false;
+        Debug.LogWarning($"it is my turn {myTurn}");
         switch (actionId)
         {
             case 0:
@@ -80,14 +81,14 @@ public class Room : MonoBehaviour
                 actionSuccess = CheckOrFold();
                 break;
             case 2:
+                actionSuccess = Call();
+                break;
+            case 3:
                 try
                 {
                     actionSuccess = Bid(Int32.Parse(bidField.text));
                 }
                 catch (Exception e) { }
-                break;
-            case 3:
-                actionSuccess = Call();
                 break;
             case 4:
                 actionSuccess = Allin();

@@ -7,6 +7,7 @@ public class RoomUI : MonoBehaviour
 {
     [SerializeField] Transform playerRoot;
     [SerializeField] Transform pokerRoot;
+    [SerializeField] Transform activityToken;
     [SerializeField] List<Sprite> decorSprites;
     [SerializeField] Text totalPotText;
     [SerializeField] Text clockText;
@@ -22,6 +23,31 @@ public class RoomUI : MonoBehaviour
     {
         timer -= Time.deltaTime;
         clockText.text = ((int)timer).ToString();
+
+        if (activityToken.gameObject.activeInHierarchy !=
+            room.myTurn)
+            activityToken.gameObject.SetActive(room.myTurn);
+    }
+    private int MianPlayerPos()
+    {
+        int playerPos = -1;
+        for (int i = 0; i < room.players.Capacity; i++)
+        {
+            if (i < room.players.Count &&
+                room.players[i] != null &&
+                room.players[i].uid == Client.instance.loginUid)
+            {
+                playerPos = i;
+                roomRoundNum.text = $"you have\n{room.players[i].timeCard} timecards";
+                break;
+            }
+        }
+        if (playerPos == -1)
+        {
+            Debug.LogWarning($"cannot find current player in room");
+            return 0;
+        }
+        return playerPos;
     }
     public void ShowPoker()
     {
@@ -57,21 +83,13 @@ public class RoomUI : MonoBehaviour
     public void ShowPlayer()
     {
         int prize = 0;
-        int playerPos = 0;
+        int playerPos = MianPlayerPos();
         for (int i = 0; i < room.players.Capacity; i++)
         {
-            if (i < room.players.Count &&
-                room.players[i] != null &&
-                room.players[i].uid == Client.instance.loginUid)
-            {
-                playerPos = i;
-                roomRoundNum.text = $"you have\n{room.players[i].timeCard} timecards";
-                break;
-            }
-        }
-        for (int i = 0; i < room.players.Capacity; i++)
-        {
-            Transform pRoot = playerRoot.Find($"p{(i - playerPos) % 8 + 1}");
+            int tempPos = i - playerPos;
+            while (tempPos < 0)
+                tempPos += 8;
+            Transform pRoot = playerRoot.Find($"p{tempPos % 8 + 1}");
             if (i >= room.players.Count ||
                 room.players[i] == null)
             {
@@ -131,9 +149,13 @@ public class RoomUI : MonoBehaviour
     }
     public void ShowPlayerHand()
     {
+        int playerPos = MianPlayerPos();
         for (int i = 0; i < room.players.Capacity; i++)
         {
-            Transform pRoot = playerRoot.Find($"p{i + 1}");
+            int tempPos = i - playerPos;
+            while (tempPos < 0)
+                tempPos += 8;
+            Transform pRoot = playerRoot.Find($"p{tempPos % 8 + 1}");
             Image decorImg1 = pRoot.Find("hand1/decor").GetComponent<Image>();
             Text pointTxt1 = pRoot.Find("hand1/point").GetComponent<Text>();
             Image decorImg2 = pRoot.Find("hand2/decor").GetComponent<Image>();
